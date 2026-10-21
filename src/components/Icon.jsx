@@ -1,11 +1,13 @@
 import {
-  Activity, BookOpen, Combine, Compass, Lightbulb, ListChecks, MessageCircle,
-  Search, ShieldCheck, Stethoscope, Wrench, GitCommitHorizontal,
+  Activity, BadgeCheck, BellRing, BookOpen, Combine, Compass, FileCheck2, GitCommitHorizontal, Inbox,
+  LayoutDashboard, Lightbulb, ListChecks, MessageCircle, Search, ShieldCheck, Siren, SlidersHorizontal,
+  Stethoscope, Wrench,
 } from 'lucide-react'
 
 const ICONS = {
-  Activity, BookOpen, Combine, Compass, Lightbulb, ListChecks, MessageCircle,
-  Search, ShieldCheck, Stethoscope, Wrench, GitCommitHorizontal,
+  Activity, BadgeCheck, BellRing, BookOpen, Combine, Compass, FileCheck2, GitCommitHorizontal, Inbox,
+  LayoutDashboard, Lightbulb, ListChecks, MessageCircle, Search, ShieldCheck, Siren, SlidersHorizontal,
+  Stethoscope, Wrench,
 }
 
 export default function Icon({ name, ...props }) {

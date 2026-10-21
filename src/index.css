@@ -18,8 +18,9 @@
   --color-amber-ink: #8a5208;
   --color-amber-tint: #fbf0dc;
 
-  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-serif: "IBM Plex Sans", system-ui, Arial, sans-serif;
   --font-sans: "IBM Plex Sans", system-ui, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
 html, body, #root { height: 100%; }

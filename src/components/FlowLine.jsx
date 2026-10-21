@@ -19,7 +19,7 @@ function kinked(x1, x2) {
 
 export default function FlowLine({ stages, impact, compact = false, selected, onSelect }) {
   const state = (id) => stages?.[id] ?? 'healthy'
-  const H = compact ? 130 : 150
+  const H = compact ? 120 : 136
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Order-to-cash flow health">
@@ -68,11 +68,11 @@ export default function FlowLine({ stages, impact, compact = false, selected, on
               </circle>
             )}
             <circle r="13" fill="#fdfdfb" stroke={c} strokeWidth="5" style={{ transition: 'stroke 500ms' }} />
-            <text y="46" textAnchor="middle" fontSize="17" fontWeight="600" fill="#1c1a3f" fontFamily="IBM Plex Sans, sans-serif">
+            <text y="44" textAnchor="middle" fontSize="14" fontWeight="600" fill="#1c1a3f" fontFamily="IBM Plex Sans, sans-serif">
               {s.label}
             </text>
             {!compact && (
-              <text y="70" textAnchor="middle" fontSize="14" fontFamily="IBM Plex Sans, sans-serif"
+              <text y="64" textAnchor="middle" fontSize="12.5" fontFamily="IBM Plex Sans, sans-serif"
                 fill={st === 'degraded' ? '#8a5208' : '#6e6c88'} fontWeight={st === 'degraded' ? 600 : 400}>
                 {st === 'degraded' ? impact ?? 'Degraded' : st === 'recovering' ? 'Recovered, verifying' : 'Normal'}
               </text>

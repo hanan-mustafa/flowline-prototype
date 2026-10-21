@@ -4,19 +4,19 @@ export const INCIDENT = {
   id: 'O2C-0187',
   title: 'E-invoices rejected after transport TR-4471',
   priority: 'P1',
-  priorityWhy: 'Set by business impact: invoices for 100+ customers blocked on a working weekend',
+  priorityWhy: 'Priority from business impact: invoicing blocked for 100+ customers',
   opened: 'Sat 22:09',
 }
 
 export const PAGE = {
   at: 'Sat 22:31',
-  line: 'Order to cash · E-invoice stage · 380 invoices waiting',
-  cause: 'Probable cause: transport TR-4471 changed the e-invoice mapping (high confidence)',
+  line: 'Order to cash · E-invoice stage · 380 invoices not accepted by the tax portal',
+  cause: 'Transport TR-4471 changed the e-invoice mapping (92% confidence)',
   done: [
-    { agent: 'flow-health', text: 'Spotted the drop in invoices accepted, 20 minutes after it began' },
-    { agent: 'triage', text: 'Folded 43 alerts and 6 user tickets into this one incident' },
-    { agent: 'service-desk', text: 'Told the 6 users who raised tickets that it is being worked on' },
-    { agent: 'investigation', text: 'Built the case file below; took no action in production' },
+    { agent: 'flow-health', text: 'Detected drop in tax portal acceptance (22:05)' },
+    { agent: 'triage', text: 'Grouped 43 alerts and 6 tickets into one incident' },
+    { agent: 'service-desk', text: 'Sent status update to 6 ticket raisers' },
+    { agent: 'investigation', text: 'Completed investigation (read-only)' },
   ],
 }
 
@@ -28,7 +28,7 @@ export const CASE = {
     { at: '21:45', text: 'First e-invoice IDoc fails with status 51', key: true },
     { at: '22:05', text: 'Flow-health agent flags e-invoice acceptance near zero' },
     { at: '22:09', text: 'Triage agent opens O2C-0187; 43 alerts and 6 tickets linked' },
-    { at: '22:31', text: 'Case file ready; on-call engineer paged' },
+    { at: '22:31', text: 'Investigation complete; on-call engineer paged' },
   ],
   diff: {
     object: 'E-invoice output mapping · field Buyer tax ID',

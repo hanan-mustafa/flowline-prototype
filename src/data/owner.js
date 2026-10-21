@@ -11,8 +11,8 @@ export const OWNER = {
 
 export const STAGE_DETAIL = {
   einvoice: {
-    what: 'Invoices are created in billing, signed, and sent to the government tax portal. Customers can only be invoiced once the portal accepts them.',
-    watching: ['Acceptance rate at the tax portal', 'Time from billing to acceptance', 'IDoc errors on the e-invoice interface'],
+    what: 'Signs billing documents and submits them to the tax portal. An invoice can only be sent to the customer after the portal accepts it.',
+    watching: ['Tax portal acceptance rate', 'Time from billing to acceptance', 'IDoc errors on the e-invoice interface'],
   },
 }
 
@@ -33,7 +33,7 @@ export const APPROVAL = {
     { text: 'All failing IDocs use the field TR-4471 changed; none of the earlier IDocs do', strength: 'strong' },
     { text: 'Failures began 5 minutes after the import, with no other change in that window', strength: 'strong' },
     { text: 'Same pattern as a mapping incident in March, fixed the same way', strength: 'supporting' },
-    { text: 'The on-call engineer reviewed the case file and agrees', strength: 'supporting' },
+    { text: 'Confirmed by the on-call engineer after reviewing the investigation', strength: 'supporting' },
   ],
   blast: [
     { label: 'Changes', text: 'One mapping on the e-invoice interface' },
@@ -66,13 +66,13 @@ export const RECOVERY = {
     { text: '512 of 512 failed IDocs reprocessed', agent: 'remediation' },
     { text: '512 of 512 invoices accepted by the tax portal', agent: 'remediation' },
     { text: 'New invoices flowing at the normal Saturday rate for 30 minutes', agent: 'flow-health' },
-    { text: 'Customers who raised tickets told it is fixed', agent: 'service-desk' },
+    { text: '6 linked tickets updated and closed', agent: 'service-desk' },
   ],
   summary: [
-    { label: 'Time to spot', value: '20 min', note: 'from first failure' },
-    { label: 'Time to fix', value: '2 h 35 m', note: 'first failure to recovery' },
-    { label: 'Invoices recovered', value: '512', note: 'none lost' },
-    { label: 'People woken', value: '2', note: 'engineer and you' },
+    { label: 'Time to detect', value: '20 min', note: 'From first failure' },
+    { label: 'Time to recover', value: '2 h 35 min', note: 'First failure to verified recovery' },
+    { label: 'Invoices recovered', value: '512', note: 'None lost' },
+    { label: 'People involved', value: '2', note: 'On-call engineer, app owner' },
   ],
 }
 
@@ -96,7 +96,7 @@ export const POLICY = [
 export const PROPOSAL = {
   agent: 'change-risk',
   title: 'Add a pre-release check for e-invoice mappings',
-  text: 'Before any transport that touches an e-invoice mapping is imported, send one test invoice through QA to the tax portal sandbox. If it is rejected, hold the import and tell the change owner.',
-  from: 'Drafted from the TR-4471 problem record',
-  effect: 'Would have stopped TR-4471 before it reached production.',
+  text: 'Before importing any transport that changes an e-invoice mapping, submit a test invoice from QA to the tax portal sandbox. If it is rejected, hold the import and notify the change owner.',
+  from: 'From problem record PRB-0044',
+  effect: 'Would have blocked TR-4471 before it reached production.',
 }

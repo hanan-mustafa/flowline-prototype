@@ -1,39 +1,55 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Loader2 } from 'lucide-react'
+import { Check, Loader2, Siren } from 'lucide-react'
 import { RECOVERY } from '../../data/owner'
+import { INCIDENT } from '../../data/engineer'
+import { INCIDENT_STATUS } from '../../components/incident'
+import PageHeader, { StatusChip } from '../../components/PageHeader'
+import Narration from '../../components/Narration'
 import { useStory } from '../../state/story'
 import AgentGlyph from '../../components/AgentGlyph'
 import SampleTag from '../../components/SampleTag'
 import Empty from '../../components/Empty'
 
 // How far the chart has got at each story step (index into RECOVERY.series)
-const CUTOFF = { 5: 8, 6: 13, 7: RECOVERY.series.length - 1 }
+const CUTOFF = [1, 5, 5, 7, 8, 8, 13, RECOVERY.series.length - 1]
 
 export default function Recovery() {
-  const { index, go } = useStory()
+  const { index } = useStory()
+  const status = INCIDENT_STATUS[index]
 
-  if (index < 5) {
-    return (
-      <Empty
-        title="Recovery starts once the fix is approved"
-        text="When the revert is approved, this page shows the remediation agent's progress and each check it runs before the incident is closed."
-        action={() => go(4)}
-        actionLabel="Go to the decision point"
+  return (
+    <>
+      <PageHeader
+        crumbs={['Incidents', index ? INCIDENT.id : 'Open']}
+        title={index ? `${INCIDENT.id} · ${INCIDENT.title}` : 'Incidents'}
+        meta={index ? <>
+          <StatusChip tone={status[1]}>{status[0]}</StatusChip>
+          <span>{INCIDENT.priority} · Order to cash · E-invoice</span>
+          <span>Opened {INCIDENT.opened}</span>
+        </> : <span>No open incidents on your flows</span>}
       />
-    )
-  }
+      <div className="p-8">
+        {index === 0 ? (
+          <Empty icon={Siren} title="No open incidents" text="Incidents affecting your flows appear here, with their business impact and progress." skipTo={1} />
+        ) : <IncidentBody index={index} />}
+      </div>
+    </>
+  )
+}
 
+function IncidentBody({ index }) {
   const running = index === 5
-  const doneChecks = running ? 1 : RECOVERY.checks.length
+  const resolved = index >= 6
+  const doneChecks = resolved ? RECOVERY.checks.length : running ? 1 : 0
 
   return (
     <div className="space-y-6">
-      {!running && (
+      {resolved && (
         <div className="grid grid-cols-4 gap-4">
           {RECOVERY.summary.map((s) => (
-            <div key={s.label} className="rise-in rounded-2xl border border-rule bg-card p-5">
-              <div className="font-serif text-3xl font-semibold text-ink">{s.value}</div>
-              <div className="mt-1 text-sm font-medium text-ink">{s.label}</div>
+            <div key={s.label} className="rise-in rounded-xl border border-rule bg-card p-4">
+              <div className="text-xs text-muted">{s.label}</div>
+              <div className="mt-1 text-2xl font-semibold text-ink">{s.value}</div>
               <div className="text-xs text-muted">{s.note}</div>
             </div>
           ))}
@@ -41,26 +57,23 @@ export default function Recovery() {
       )}
 
       <div className="grid grid-cols-[1.5fr_1fr] gap-6">
-        <section className="rounded-2xl border border-rule bg-card p-6">
+        <section className="rounded-xl border border-rule bg-card p-5">
           <div className="flex items-start justify-between">
             <div>
-              <div className="text-sm font-semibold text-ink">Invoices accepted by the tax portal</div>
-              <div className="text-xs text-muted">Every 15 minutes, Saturday night</div>
+              <div className="text-sm font-semibold text-ink">Invoices accepted by tax portal</div>
+              <div className="text-xs text-muted">Per 15 minutes</div>
             </div>
             <SampleTag />
           </div>
           <AcceptanceChart upTo={CUTOFF[index]} />
-          <p className="mt-2 text-xs text-muted">
-            The tall bars after the fix are the backlog being resent; the flow then settles back to its normal rate.
-          </p>
         </section>
 
-        <section className="rounded-2xl border border-rule bg-card p-6">
+        <section className="rounded-xl border border-rule bg-card p-5">
           <div className="flex items-center justify-between">
-            <div className="text-sm font-semibold text-ink">Checks before closing</div>
-            <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${running ? 'bg-amber-tint text-amber-ink' : 'bg-green-tint text-green-ink'}`}>
-              {running ? 'Fix running' : 'All passed'}
-            </span>
+            <div className="text-sm font-semibold text-ink">Remediation checks</div>
+            <StatusChip tone={resolved ? 'good' : running ? 'info' : 'neutral'}>
+              {resolved ? 'All passed' : running ? 'In progress' : 'Not started'}
+            </StatusChip>
           </div>
           <ul className="mt-4 space-y-3">
             {RECOVERY.checks.map((c, i) => {
@@ -77,18 +90,26 @@ export default function Recovery() {
               )
             })}
           </ul>
-          {running ? (
-            <button onClick={() => go(6)} className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-indigo">
-              Skip ahead to Sun 00:20 <ArrowRight size={14} />
-            </button>
-          ) : (
-            <div className="mt-6 rounded-xl bg-paper p-4 text-sm leading-relaxed text-body">
-              Incident closed by the remediation agent at Sun 00:50. A problem record is open so this does not happen again.{' '}
-              <Link to="/owner/policy" className="font-semibold text-indigo">See the proposed check →</Link>
-            </div>
+          {index < 5 && (
+            <p className="mt-5 rounded-lg bg-paper p-3 text-sm text-body">
+              {index === 4
+                ? <>Waiting for your approval of the revert. <Link to="/owner/approval" className="font-semibold text-indigo">Review approval</Link></>
+                : 'Starts once a fix is approved.'}
+            </p>
+          )}
+          {resolved && (
+            <p className="mt-5 rounded-lg bg-paper p-3 text-sm leading-relaxed text-body">
+              Closed by Remediation agent · Sun 00:50. Problem record PRB-0044 opened.{' '}
+              {index === 7 && <Link to="/owner/policy" className="font-semibold text-indigo">1 policy proposal</Link>}
+            </p>
           )}
         </section>
       </div>
+
+      <section className="rounded-xl border border-rule bg-card p-3">
+        <div className="px-2 pb-1 pt-2 text-sm font-semibold text-ink">Activity</div>
+        <Narration />
+      </section>
     </div>
   )
 }
@@ -107,8 +128,8 @@ function AcceptanceChart({ upTo }) {
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="mt-4 w-full" role="img" aria-label="Invoices accepted per 15 minutes">
-      <rect x={xAt(outage[0])} y={T - 6} width={(outage[1] - outage[0] + 1) * bw} height={H - T - B + 6} fill="#fbf0dc" rx="4" />
-      <text x={xAt(outage[0]) + 6} y={T + 8} fontSize="11" fill="#8a5208" fontWeight="600">Invoices stuck</text>
+      {upTo >= outage[0] && <rect x={xAt(outage[0])} y={T - 6} width={(Math.min(outage[1], upTo) - outage[0] + 1) * bw} height={H - T - B + 6} fill="#fbf0dc" rx="4" />}
+      {upTo >= outage[0] && <text x={xAt(outage[0]) + 6} y={T + 8} fontSize="11" fill="#8a5208" fontWeight="600">Not accepted</text>}
       {[0, 100, 200].map((v) => (
         <g key={v}>
           <line x1={L} x2={W - R} y1={y(v)} y2={y(v)} stroke="#e2e1ec" strokeDasharray={v ? '2 4' : undefined} />
@@ -124,8 +145,8 @@ function AcceptanceChart({ upTo }) {
           {i % 4 === 0 && <text x={xAt(i) + bw / 2} y={H - 8} fontSize="11" textAnchor="middle" fill="#6e6c88">{t}</text>}
         </g>
       ))}
-      <Marker x={changeX} label="TR-4471 imported" top={T - 14} />
-      {upTo >= idx('23:00') && <Marker x={approveX} label="You approved" top={T - 14} anchor="end" />}
+      {upTo >= idx('21:30') && <Marker x={changeX} label="TR-4471 imported" top={T - 14} anchor="end" />}
+      {upTo >= idx('23:00') && <Marker x={approveX} label="Revert approved" top={T - 14} />}
     </svg>
   )
 }

@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Check, CheckCheck, ChevronRight, Hand, PenLine, ShieldCheck, UserRound } from 'lucide-react'
+import { Check, CheckCheck, ChevronRight, Hand, Inbox as InboxIcon, PenLine, ShieldCheck, UserRound } from 'lucide-react'
 import { BRIEF, NEEDS_YOU, RESOLVED } from '../../data/l1'
 import { AGENTS } from '../../data/scenario'
 import { useStory } from '../../state/story'
-import RoleHeader from '../../components/RoleHeader'
+import PageHeader from '../../components/PageHeader'
 import AgentGlyph from '../../components/AgentGlyph'
 import Empty from '../../components/Empty'
 import SampleTag from '../../components/SampleTag'
@@ -13,44 +13,39 @@ const ALL_RESOLVED = RESOLVED.flatMap((g) => g.items.map((i) => ({ ...i, flow: g
 const findItem = (id) => NEEDS_YOU.find((i) => i.id === id) ?? ALL_RESOLVED.find((i) => i.id === id)
 
 export default function L1View() {
-  const { index, go } = useStory()
+  const { index } = useStory()
   const [selected, setSelected] = useState(NEEDS_YOU[0].id)
   const [handled, setHandled] = useState({})
   const handle = (id, label) => setHandled((h) => ({ ...h, [id]: label }))
   const open = NEEDS_YOU.filter((i) => !handled[i.id]).length
 
   return (
-    <div className="mx-auto max-w-[1360px] px-8 pt-10">
-      <RoleHeader roleId="l1" />
-
+    <>
+      <PageHeader
+        crumbs={['Queue']}
+        title="Queue"
+        meta={<span>Finance applications · {BRIEF.window}</span>}
+        actions={<SampleTag />}
+      />
+      <div className="p-8">
       {index < 7 ? (
-        <div className="mt-8">
-          <Empty
-            title="Your shift starts Monday at 09:00"
-            text="Over the weekend, agents work the queue: they answer users, rerun what is safe, and link tickets to incidents. Anything they are unsure of waits here for you, with their reasoning."
-            action={() => go(7)}
-            actionLabel="Jump to Monday 09:00"
-          />
-        </div>
+        <Empty icon={InboxIcon} title="Nothing needs review"
+          text="Agents are handling incoming tickets. Items they can't resolve with confidence, and actions above their autonomy level, appear here."
+          skipTo={7} />
       ) : (
         <>
-          <section className="mt-8 flex items-center gap-10 rounded-2xl bg-indigo px-8 py-6 text-white">
-            <div className="flex-1">
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-green-soft">Morning brief · {BRIEF.window}</div>
-              <p className="mt-2 font-serif text-2xl leading-snug">
-                The weekend’s big incident is closed. Agents resolved {BRIEF.resolved} items; {open === 0 ? 'nothing is left for you.' : `${open} need${open === 1 ? 's' : ''} you.`}
-              </p>
-            </div>
-            <BriefStat value={BRIEF.resolved} label="Resolved by agents" />
-            <BriefStat value={open} label="Need you" warn={open > 0} />
-            <SampleTag className="border-white/40 text-white/70" />
-          </section>
+          <div className="grid grid-cols-4 gap-4">
+            <Stat label="Resolved by agents" value={BRIEF.resolved} note="Since Fri 18:00" />
+            <Stat label="Needs review" value={open} note="Handed off, approvals, spot checks" warn={open > 0} />
+            <Stat label="Avg. agent confidence" value="94%" note="Resolved items" />
+            <Stat label="Corrections this week" value="3" note="Of 212 agent replies" />
+          </div>
 
-          <div className="mt-6 grid grid-cols-[400px_1fr] items-start gap-6">
+          <div className="mt-6 grid grid-cols-[380px_1fr] items-start gap-6">
             <nav className="space-y-6">
               <div>
                 <div className="mb-2 flex items-center justify-between px-1">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-amber-ink">Needs you</span>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-amber-ink">Needs review</span>
                   <span className="text-xs text-muted">{open} open</span>
                 </div>
                 <div className="space-y-2">
@@ -62,7 +57,7 @@ export default function L1View() {
               </div>
 
               <div>
-                <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-green-ink">Resolved overnight, by business flow</div>
+                <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-green-ink">Resolved by agents</div>
                 <div className="space-y-4">
                   {RESOLVED.map((g) => (
                     <div key={g.flow}>
@@ -83,15 +78,17 @@ export default function L1View() {
           </div>
         </>
       )}
-    </div>
+      </div>
+    </>
   )
 }
 
-function BriefStat({ value, label, warn }) {
+function Stat({ label, value, note, warn }) {
   return (
-    <div className="text-right">
-      <div className={`font-serif text-4xl font-semibold tabular-nums ${warn ? 'text-[#f4c27a]' : 'text-white'}`}>{value}</div>
-      <div className="text-xs text-white/70">{label}</div>
+    <div className="rounded-xl border border-rule bg-card p-4">
+      <div className="text-xs text-muted">{label}</div>
+      <div className={`mt-1 text-2xl font-semibold tabular-nums ${warn ? 'text-amber-ink' : 'text-ink'}`}>{value}</div>
+      <div className="text-xs text-muted">{note}</div>
     </div>
   )
 }
@@ -117,13 +114,13 @@ function QueueRow({ item, active, done, onClick, tag, warn }) {
 function Detail({ item, done, onHandle }) {
   const agent = AGENTS[item.agent]
   return (
-    <article className="rise-in rounded-2xl border border-rule bg-card">
+    <article className="rise-in rounded-xl border border-rule bg-card">
       <header className="border-b border-rule p-6">
         <div className="flex items-center gap-2 text-xs">
           <span className="rounded-full bg-indigo-tint px-2.5 py-1 font-semibold text-indigo">{item.kind ?? item.level}</span>
           <span className="text-muted">{item.flow ?? ''}</span>
         </div>
-        <h2 className="mt-3 font-serif text-2xl font-semibold text-ink">{item.title}{item.count > 1 ? ` (${item.count})` : ''}</h2>
+        <h2 className="mt-3 text-lg font-semibold text-ink">{item.title}{item.count > 1 ? ` (${item.count})` : ''}</h2>
         <div className="mt-3 flex items-center gap-3">
           <AgentGlyph id={item.agent} size={26} />
           <span className="text-sm text-body">{agent.name}</span>
@@ -134,7 +131,7 @@ function Detail({ item, done, onHandle }) {
       <div className="space-y-6 p-6">
         {(item.why || item.summary) && (
           <div className="rounded-xl bg-paper p-4 text-[15px] leading-relaxed text-ink">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted">{item.why ? 'In the agent’s words' : 'What the agent did'}</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted">{item.why ? 'Agent note' : 'Summary'}</span>
             <p className="mt-1">{item.why ?? item.summary}</p>
           </div>
         )}
@@ -179,7 +176,7 @@ function Exception({ item, done, onHandle }) {
         </ol>
       </div>
       <div>
-        <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">Drafted reply</div>
+        <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">Draft reply</div>
         <textarea rows={4} defaultValue={item.draft} disabled={!!done}
           className="w-full rounded-xl border border-rule bg-paper p-3 text-sm leading-relaxed text-ink outline-none focus:border-indigo disabled:opacity-70" />
       </div>
@@ -189,7 +186,7 @@ function Exception({ item, done, onHandle }) {
             className="flex-1 rounded-lg bg-indigo px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-2">
             Send reply and close
           </button>
-          <button onClick={() => onHandle('You took over this ticket. The agent stays on hand with the case history.')}
+          <button onClick={() => onHandle('Assigned to you.')}
             className="inline-flex items-center gap-1.5 rounded-lg border border-rule px-4 py-2.5 text-sm text-ink hover:bg-paper">
             <Hand size={14} /> Take over
           </button>
@@ -215,14 +212,13 @@ function LevelTwo({ item, done, onHandle }) {
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-indigo px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-2">
             <ShieldCheck size={16} /> Approve the rerun
           </button>
-          <button onClick={() => onHandle('Declined. The job stays stopped and the billing team is told why.')}
+          <button onClick={() => onHandle('Declined. Billing team notified.')}
             className="rounded-lg border border-rule px-4 py-2.5 text-sm text-ink hover:bg-paper">Decline</button>
         </div>
       )}
       {!done && (
         <p className="text-xs text-muted">
-          Level 2 for this job: the agent recommends and a person acts. Clean approvals count toward raising it, which the app owner decides in the{' '}
-          <Link to="/owner/policy" className="font-semibold text-indigo">autonomy policy</Link>.
+          Policy level 2 for this action: agent recommends, a person approves. Approvals count toward the action's track record.
         </p>
       )}
     </>
@@ -240,7 +236,7 @@ function Review({ item, done, onHandle }) {
             {t.from === 'agent' ? <AgentGlyph id={item.agent} size={28} /> : (
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-paper text-muted"><UserRound size={15} /></span>
             )}
-            <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-left text-sm leading-relaxed ${t.from === 'agent' ? 'bg-indigo-tint/70 text-ink' : 'bg-paper text-ink'}`}>
+            <div className={`max-w-[80%] rounded-xl px-4 py-2.5 text-left text-sm leading-relaxed ${t.from === 'agent' ? 'bg-indigo-tint/70 text-ink' : 'bg-paper text-ink'}`}>
               {t.name && <div className="mb-0.5 text-xs font-semibold text-muted">{t.name}</div>}
               {t.text}
             </div>
@@ -250,7 +246,7 @@ function Review({ item, done, onHandle }) {
       {item.source && <p className="text-xs text-muted">Sources: {item.source}</p>}
       {item.id === 'o2c-tickets' && (
         <p className="text-xs text-muted">
-          Linked incident: <Link to="/engineer/case" className="font-semibold text-indigo">O2C-0187 case file</Link>
+          Linked incident: <span className="font-semibold text-ink">O2C-0187</span>
         </p>
       )}
 
@@ -259,22 +255,22 @@ function Review({ item, done, onHandle }) {
           <textarea rows={4} defaultValue={last.text}
             className="w-full rounded-xl border border-rule bg-paper p-3 text-sm leading-relaxed text-ink outline-none focus:border-indigo" />
           <div className="flex gap-2">
-            <button onClick={() => onHandle('Correction sent to the user. The service desk agent learns from your wording for similar questions.')}
+            <button onClick={() => onHandle('Correction sent. Added to the agent’s feedback set.')}
               className="flex-1 rounded-lg bg-indigo px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-2">Send correction</button>
             <button onClick={() => setEditing(false)} className="rounded-lg border border-rule px-4 py-2 text-sm text-ink hover:bg-paper">Cancel</button>
           </div>
         </div>
       ) : (
         <div className="flex gap-2">
-          <button onClick={() => onHandle('Accepted. Counts toward this agent’s track record.')}
+          <button onClick={() => onHandle('Accepted.')}
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-indigo px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-2">
-            <CheckCheck size={16} /> Looks right
+            <CheckCheck size={16} /> Accept
           </button>
           <button onClick={() => setEditing(true)}
             className="inline-flex items-center gap-1.5 rounded-lg border border-rule px-4 py-2.5 text-sm text-ink hover:bg-paper">
-            <PenLine size={14} /> Correct the reply
+            <PenLine size={14} /> Edit reply
           </button>
-          <button onClick={() => onHandle('You took over. The user is told a person is now handling it.')}
+          <button onClick={() => onHandle('Assigned to you. The user has been notified.')}
             className="inline-flex items-center gap-1.5 rounded-lg border border-rule px-4 py-2.5 text-sm text-ink hover:bg-paper">
             <Hand size={14} /> Take over
           </button>
@@ -287,9 +283,9 @@ function Review({ item, done, onHandle }) {
 function Simple({ done, onHandle }) {
   return done ? <Done text={done} /> : (
     <div className="flex gap-2">
-      <button onClick={() => onHandle('Accepted. Counts toward this agent’s track record.')}
+      <button onClick={() => onHandle('Accepted.')}
         className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-indigo px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-2">
-        <CheckCheck size={16} /> Looks right
+        <CheckCheck size={16} /> Accept
       </button>
       <button onClick={() => onHandle('Flagged for review with the agent’s owner.')}
         className="rounded-lg border border-rule px-4 py-2.5 text-sm text-ink hover:bg-paper">Flag</button>

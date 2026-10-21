@@ -26,12 +26,12 @@ export default function AuditTrail({ open, onClose }) {
   if (!open) return null
   return (
     <div className="fixed inset-0 z-40 flex justify-end bg-ink/20" onClick={onClose}>
-      <aside className="rise-in flex h-full w-[480px] flex-col bg-card shadow-2xl" onClick={(e) => e.stopPropagation()} aria-label="Audit trail">
+      <aside className="rise-in flex h-full w-[480px] flex-col bg-card shadow-2xl" onClick={(e) => e.stopPropagation()} aria-label="Audit log">
         <header className="flex items-start justify-between border-b border-rule p-6">
           <div>
-            <div className="eyebrow">Audit trail</div>
-            <div className="mt-1 font-serif text-2xl font-semibold text-ink">Incident O2C-0187</div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted"><Lock size={12} />Append-only · every action with its policy level, approver and rollback</div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-muted">Audit log</div>
+            <div className="mt-1 text-lg font-semibold text-ink">Incident O2C-0187</div>
+            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted"><Lock size={12} />Append-only · policy level, approver and rollback recorded for each action</div>
           </div>
           <button onClick={onClose} aria-label="Close" className="rounded-md p-1.5 text-muted hover:bg-paper hover:text-ink"><X size={18} /></button>
         </header>
@@ -54,7 +54,7 @@ export default function AuditTrail({ open, onClose }) {
           ))}
         </ol>
         <footer className="border-t border-rule px-6 py-3 text-xs text-muted">
-          Showing entries up to the current story step. Use the timeline to see more.
+          Showing all entries up to the current time.
         </footer>
       </aside>
     </div>
