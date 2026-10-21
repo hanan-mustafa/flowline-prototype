@@ -17,12 +17,18 @@ function kinked(x1, x2) {
   return `M${x1} ${Y} C ${x1 + 50} ${Y}, ${mid - 40} ${Y + 52}, ${mid} ${Y + 52} S ${x2 - 50} ${Y}, ${x2} ${Y}`
 }
 
-export default function FlowLine({ stages, impact, compact = false }) {
+export default function FlowLine({ stages, impact, compact = false, selected, onSelect }) {
   const state = (id) => stages?.[id] ?? 'healthy'
   const H = compact ? 130 : 150
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Order-to-cash flow health">
+      {onSelect && FLOW.stages.map((s, i) => (
+        <rect key={s.id} x={X[i] - 70} y={Y - 32} width="140" height="112" rx="12"
+          fill={selected === s.id ? '#ecebf5' : 'transparent'} onClick={() => onSelect(s.id)}
+          className="cursor-pointer transition-colors hover:fill-[#f1f0f7]" />
+      ))}
+
       {FLOW.stages.slice(1).map((s, i) => {
         const x1 = X[i]
         const x2 = X[i + 1]
@@ -51,7 +57,10 @@ export default function FlowLine({ stages, impact, compact = false }) {
         const st = state(s.id)
         const c = COLORS[st]
         return (
-          <g key={s.id} transform={`translate(${X[i]} ${Y})`}>
+          <g key={s.id} transform={`translate(${X[i]} ${Y})`}
+            onClick={onSelect ? () => onSelect(s.id) : undefined}
+            style={{ cursor: onSelect ? 'pointer' : undefined }}>
+
             {st !== 'healthy' && (
               <circle r="14" fill={c} opacity="0.25">
                 <animate attributeName="r" values="14;24;14" dur="2s" repeatCount="indefinite" />
