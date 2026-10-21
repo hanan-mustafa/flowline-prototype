@@ -2,7 +2,7 @@
 
 export const INCIDENT = {
   id: 'O2C-0187',
-  title: 'E-invoices rejected after transport TR-4471',
+  title: 'E-invoices rejected after SAP change package TR-4471',
   priority: 'P1',
   priorityWhy: 'Priority from business impact: invoicing blocked for 100+ customers',
   opened: 'Sat 22:09',
@@ -11,7 +11,7 @@ export const INCIDENT = {
 export const PAGE = {
   at: 'Sat 22:31',
   line: 'Order to cash · E-invoice stage · 380 invoices not accepted by the tax portal',
-  cause: 'Transport TR-4471 changed the e-invoice mapping (92% confidence)',
+  cause: 'SAP change package TR-4471 changed the e-invoice mapping (92% confidence)',
   done: [
     { agent: 'flow-health', text: 'Detected drop in tax portal acceptance (22:05)' },
     { agent: 'triage', text: 'Grouped 43 alerts and 6 tickets into one incident' },
@@ -51,7 +51,7 @@ export const CASE = {
   similar: {
     id: 'O2C-0112',
     when: 'March',
-    text: 'A mapping change in TR-3920 broke credit-note e-invoices. Fixed by reverting the transport in 40 minutes.',
+    text: 'A mapping change in SAP change package TR-3920 broke credit-note e-invoices. Fixed by reverting the change package in 40 minutes.',
   },
 }
 
@@ -60,7 +60,7 @@ export const FIXES = [
     id: 'revert',
     name: 'Revert TR-4471',
     recommended: true,
-    how: 'Import TR-4472, which restores the mapping as it was, then reprocess the failed IDocs.',
+    how: 'Import reversal change package TR-4472, which restores the mapping as it was, then reprocess the failed IDocs.',
     rows: {
       'Time to recover': 'About 1 hour, including reprocessing',
       Risk: 'Low: returns to a version that ran for months',
@@ -86,17 +86,17 @@ export const FIXES = [
 export const KB = {
   title: 'E-invoices rejected for missing buyer tax ID after a mapping change',
   symptoms: 'E-invoice IDocs fail with status 51; the portal rejects them for a missing buyer tax ID; billing keeps posting normally.',
-  check: 'Compare the e-invoice output mapping with the last version that worked. Look for a recent transport that touches it.',
-  fix: 'Revert the transport (or restore the mapping), reprocess the failed IDocs in batches, and confirm acceptance at the portal.',
+  check: 'Compare the e-invoice output mapping with the last version that worked. Look for a recent SAP change package that touches it.',
+  fix: 'Revert the SAP change package (or restore the mapping), reprocess the failed IDocs in batches, and confirm acceptance at the portal.',
   learnedFrom: 'O2C-0187',
 }
 
 export const PROBLEM = {
   id: 'PRB-0044',
   rootCause: 'TR-4471 pointed Buyer tax ID at a field that is empty for most domestic customers.',
-  whyMissed: 'QA tests for the transport checked the invoice layout but did not send a test invoice to the tax portal sandbox.',
+  whyMissed: 'QA tests for the SAP change package checked the invoice layout but did not send a test invoice to the tax portal sandbox.',
   actions: [
-    { text: 'Pre-release check: send one test invoice to the portal sandbox for any transport that touches e-invoice mappings', owner: 'Change-risk agent, approved by the app owner' },
-    { text: 'Re-raise the pricing tweak from TR-4471 as its own transport', owner: 'Finance IT' },
+    { text: 'Pre-release check: send one test invoice to the portal sandbox for any SAP change package that touches e-invoice mappings', owner: 'Change-risk agent, approved by the app owner' },
+    { text: 'Re-raise the pricing tweak from TR-4471 as its own SAP change package', owner: 'Finance IT' },
   ],
 }

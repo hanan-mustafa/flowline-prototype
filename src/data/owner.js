@@ -17,14 +17,14 @@ export const STAGE_DETAIL = {
 }
 
 export const APPROVAL = {
-  title: 'Revert transport TR-4471',
+  title: 'Revert SAP change package TR-4471',
   level: 3,
   levelName: 'Act with approval',
   requestedBy: { role: 'engineer', at: 'Sat 22:48' },
   preparedBy: 'remediation',
   why: 'TR-4471 changed the field mapping for outbound e-invoices. Since then, every e-invoice IDoc has failed (status 51) and nothing has reached the tax portal.',
   plan: [
-    'Import TR-4472, which restores the mapping as it was before TR-4471',
+    'Import reversal change package TR-4472, which restores the mapping as it was before TR-4471',
     'Reprocess the failed e-invoice IDocs in batches of 50',
     'Check that each invoice is accepted by the tax portal',
     'Watch the flow for 30 minutes, then close the incident',
@@ -46,7 +46,7 @@ export const APPROVAL = {
     time: 'About 5 minutes',
     tested: 'Dry run passed in QA at 22:44',
   },
-  record: { action: 'Transport revert', runs: 14, success: 14, lastIssue: 'no failures in 12 months' },
+  record: { action: 'Change package revert', runs: 14, success: 14, lastIssue: 'no failures in 12 months' },
   options: [
     { name: 'Revert TR-4471', chosen: true, note: 'Fastest and fully reversible' },
     { name: 'Patch the mapping in production', note: 'Keeps the pricing tweak, but is an untested change at night' },
@@ -62,7 +62,7 @@ export const RECOVERY = {
   ],
   markers: { change: '21:40', fix: '23:15', approve: '23:02' },
   checks: [
-    { text: 'TR-4472 imported; mapping matches the version before TR-4471', agent: 'remediation' },
+    { text: 'Reversal change package TR-4472 imported; mapping matches the version before TR-4471', agent: 'remediation' },
     { text: '512 of 512 failed IDocs reprocessed', agent: 'remediation' },
     { text: '512 of 512 invoices accepted by the tax portal', agent: 'remediation' },
     { text: 'New invoices flowing at the normal Saturday rate for 30 minutes', agent: 'flow-health' },
@@ -87,7 +87,7 @@ export const POLICY = [
   { action: 'Restart a stuck interface channel', agent: 'remediation', level: 4, max: 4, record: '38 runs, all clean', reversible: true },
   { action: 'Rerun a failed batch job', agent: 'remediation', level: 4, max: 4, record: '41 runs, all clean', reversible: true },
   { action: 'Reprocess failed IDocs', agent: 'remediation', level: 3, max: 4, record: '23 runs, all clean', reversible: true, promote: true },
-  { action: 'Revert a transport in production', agent: 'remediation', level: 3, max: 3, record: '14 runs, all clean', reversible: true, note: 'Production change: always needs a named approver' },
+  { action: 'Revert an SAP change package in production', agent: 'remediation', level: 3, max: 3, record: '14 runs, all clean', reversible: true, note: 'Production change: always needs a named approver' },
   { action: 'Patch configuration in production', agent: 'remediation', level: 2, max: 3, record: '3 runs, 1 rolled back', reversible: true },
   { action: 'Correct posted invoice data', agent: 'remediation', level: 1, max: 2, record: 'Not attempted', reversible: false, note: 'Financial data: agents never change it alone' },
   { action: 'Reply to users about a known incident', agent: 'service-desk', level: 4, max: 4, record: '212 replies, 3 corrected', reversible: true },
@@ -96,7 +96,7 @@ export const POLICY = [
 export const PROPOSAL = {
   agent: 'change-risk',
   title: 'Add a pre-release check for e-invoice mappings',
-  text: 'Before importing any transport that changes an e-invoice mapping, submit a test invoice from QA to the tax portal sandbox. If it is rejected, hold the import and notify the change owner.',
+  text: 'Before importing any SAP change package that changes an e-invoice mapping, submit a test invoice from QA to the tax portal sandbox. If it is rejected, hold the import and notify the change owner.',
   from: 'From problem record PRB-0044',
   effect: 'Would have blocked TR-4471 before it reached production.',
 }

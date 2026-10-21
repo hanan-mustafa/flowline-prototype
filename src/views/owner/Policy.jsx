@@ -136,7 +136,7 @@ function ProposalCard({ state, onDecide }) {
           {state === 'approved' ? (
             <div className="rise-in rounded-xl bg-green-tint p-4 text-sm text-green-ink">
               <div className="flex items-center gap-1.5 font-semibold"><Check size={15} /> Approved</div>
-              <p className="mt-1 text-body">Active for all matching transports.</p>
+              <p className="mt-1 text-body">Active for all matching SAP change packages.</p>
             </div>
           ) : state === 'later' ? (
             <div className="rise-in rounded-xl bg-paper p-4 text-sm text-body">Added to the next change board agenda.</div>
