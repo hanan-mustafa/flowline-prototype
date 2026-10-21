@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f7f7f4;
+  --color-card: #fdfdfb;
+  --color-ink: #1c1a3f;
+  --color-body: #4a4867;
+  --color-muted: #6e6c88;
+  --color-rule: #e2e1ec;
+  --color-indigo: #2b2370;
+  --color-indigo-2: #3a3190;
+  --color-indigo-tint: #ecebf5;
+  --color-green: #5db33a;
+  --color-green-ink: #2e7d1f;
+  --color-green-tint: #e3f2dc;
+  --color-green-soft: #9bdb7e;
+  --color-amber: #d98a1c;
+  --color-amber-ink: #8a5208;
+  --color-amber-tint: #fbf0dc;
+
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-sans: "IBM Plex Sans", system-ui, Arial, sans-serif;
+}
+
+html, body, #root { height: 100%; }
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-green-ink);
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.rise-in { animation: rise-in 360ms ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
