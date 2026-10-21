@@ -1,9 +1,17 @@
+import { useCallback, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { ScrollText } from 'lucide-react'
 import { ROLES, FLOW } from '../data/scenario'
 import Wordmark from './Wordmark'
 import Icon from './Icon'
+import AuditTrail, { auditCount } from './AuditTrail'
+import { useStory } from '../state/story'
 
 export default function TopBar() {
+  const { index } = useStory()
+  const [audit, setAudit] = useState(false)
+  const close = useCallback(() => setAudit(false), [])
+
   return (
     <header className="border-b border-rule bg-card">
       <div className="mx-auto flex h-16 max-w-[1360px] items-center gap-6 px-8">
@@ -26,7 +34,14 @@ export default function TopBar() {
             </NavLink>
           ))}
         </nav>
+
+        <button onClick={() => setAudit(true)}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-rule px-3 py-2 text-sm font-medium text-ink transition hover:bg-paper">
+          <ScrollText size={15} /> Audit trail
+          <span className="rounded-full bg-indigo-tint px-1.5 text-xs tabular-nums text-indigo">{auditCount(index)}</span>
+        </button>
       </div>
+      <AuditTrail open={audit} onClose={close} />
     </header>
   )
 }

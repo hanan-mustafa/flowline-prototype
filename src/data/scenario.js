@@ -36,7 +36,6 @@ export const ROLES = [
     shiftFrom: 'Chasing updates',
     shiftTo: 'Governing the flow',
     home: 'Flow map',
-    buildStep: 2,
     screens: [
       { title: 'Flow map', text: 'Order-to-cash end to end, with impact in business terms.' },
       { title: 'Approval card', text: 'The revert plan, its evidence, blast radius, rollback and track record.' },
@@ -54,7 +53,6 @@ export const ROLES = [
     shiftFrom: 'Searching for clues',
     shiftTo: 'Deciding from evidence',
     home: 'Case file',
-    buildStep: 3,
     screens: [
       { title: 'Notification', text: 'One line: which flow, which stage, impact, probable cause.' },
       { title: 'Case file', text: 'Timeline, evidence, probable cause and what was ruled out.' },
@@ -72,7 +70,6 @@ export const ROLES = [
     shiftFrom: 'Routing tickets',
     shiftTo: 'Supervising agents',
     home: 'Supervision queue',
-    buildStep: 4,
     screens: [
       { title: 'Supervision queue', text: '“Resolved overnight” and “Needs you”, grouped by business flow.' },
       { title: 'Agent review', text: 'Accept or correct what an agent did and said to a user.' },
@@ -126,7 +123,7 @@ export const MOMENTS = [
   {
     id: 'investigate',
     // who has a decision waiting at this moment
-    awaits: { engineer: { label: 'Confirm the cause', to: '/engineer' } },
+    awaits: { engineer: { label: 'Confirm the cause', to: '/engineer/case' } },
     day: 'Sat',
     time: '22:31',
     actor: { kind: 'agent', id: 'investigation' },
@@ -174,7 +171,7 @@ export const MOMENTS = [
   {
     id: 'monday',
     // who has a decision waiting at this moment
-    awaits: { l1: { label: 'Review the overnight queue', to: '/l1' }, owner: { label: 'Review the proposed check', to: '/owner/policy' } },
+    awaits: { l1: { label: 'Review the overnight queue', to: '/l1' }, engineer: { label: 'Sign off the drafts', to: '/engineer/signoff' }, owner: { label: 'Review the proposed check', to: '/owner/policy' } },
     day: 'Mon',
     time: '09:00',
     actor: { kind: 'role', id: 'l1' },

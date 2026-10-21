@@ -33,7 +33,10 @@ export default function Timeline() {
       <div className="mx-auto flex max-w-[1360px] items-center gap-6 px-8 py-4">
         <div className="w-36 shrink-0">
           <div className="eyebrow">Story</div>
-          <div className="mt-1 text-sm text-muted">Step {index + 1} of {total}</div>
+          <div className="mt-1 text-sm text-muted">
+            Step {index + 1} of {total}
+            {index > 0 && <button onClick={() => go(0)} className="ml-2 text-xs font-semibold text-indigo hover:underline">Restart</button>}
+          </div>
           <div className="mt-2 flex gap-1.5">
             <button onClick={() => go(index - 1)} disabled={index === 0} aria-label="Previous step"
               className="rounded-md border border-rule p-1.5 text-ink hover:bg-indigo-tint disabled:opacity-30">

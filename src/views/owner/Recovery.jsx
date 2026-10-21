@@ -4,7 +4,7 @@ import { RECOVERY } from '../../data/owner'
 import { useStory } from '../../state/story'
 import AgentGlyph from '../../components/AgentGlyph'
 import SampleTag from '../../components/SampleTag'
-import { Empty } from './Approval'
+import Empty from '../../components/Empty'
 
 // How far the chart has got at each story step (index into RECOVERY.series)
 const CUTOFF = { 5: 8, 6: 13, 7: RECOVERY.series.length - 1 }
